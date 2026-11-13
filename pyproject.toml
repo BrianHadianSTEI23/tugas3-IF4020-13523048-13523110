@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "norasign"
+version = "1.0.0"
+description = "NoraSign: Cryptographic Software Release Signing and Verification CLI for IF4020"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Brian A. Hadian", email = "13523048@std.stei.itb.ac.id" },
+    { name = "Andrew Isra Saputra DB", email = "13523110@std.stei.itb.ac.id" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "cryptography>=41.0.0"
+]
+
+[project.scripts]
+norasign = "norasign.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["norasign*"]

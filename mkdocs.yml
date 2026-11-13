@@ -1,0 +1,53 @@
+site_name: NoraSign Documentation
+site_description: Cryptographic Software Release Signing and Verification CLI (IF4020)
+site_author: Brian A. Hadian (13523048) & Andrew Isra Saputra DB (13523110)
+repo_url: https://github.com/BrianHadianSTEI23/tugas3-IF4020-13523048-13523110
+repo_name: BrianHadianSTEI23/tugas3-IF4020-13523048-13523110
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - CLI Reference: cli.md
+  - Architecture & Specification:
+      - Cryptographic Profiles: crypto_spec.md
+      - Release Manifest & Bundle: manifest_spec.md
+  - Internal API:
+      - Crypto Engine: api_crypto.md
+      - Manifest Module: api_manifest.md
+      - Bundle Module: api_bundle.md
+  - CI/CD & Docker: container_guide.md
+  - Video Demo Guide: video_demo_guide.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - tables
