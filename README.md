@@ -190,7 +190,6 @@ bash scripts/run_ci_scenarios.sh norasign:local
   - Performance benchmarking suite (`scripts/benchmark.py`) and OpenSSL interoperability test suite (`tests/test_interop.py`).
   - GitHub Actions CI/CD workflows (`.github/workflows/ci.yml`, `docs.yml`).
   - Bonus 2: API Documentation setup via MkDocs and GitHub Pages.
-  - Report preparation (Theoretical background, design diagrams, security mitigations, benchmark results).
 
 - **Andrew Isra Saputra DB (13523110)**:
   - Component 3: Trust Store Management (`norasign/trust.py`) with atomic file updates.
@@ -198,3 +197,5 @@ bash scripts/run_ci_scenarios.sh norasign:local
   - Component 5: Bonus 3 Signed SBOM implementation (`norasign/sbom.py`).
   - Test scenarios U01 - U14 execution and failure analysis.
   - Bonus 1: Video Demo on-camera recording and presentation.
+  - Report preparation (Theoretical background, design diagrams, security mitigations, benchmark results).
+
