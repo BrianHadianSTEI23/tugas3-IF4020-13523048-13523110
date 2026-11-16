@@ -69,3 +69,4 @@ site/
 !test_cases/**/*.pub.pem
 !test_cases/**/*.bundle.json
 .venv/
+!ci_evidence/**/*.bundle.json

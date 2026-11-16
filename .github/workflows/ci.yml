@@ -3,7 +3,6 @@ name: CI & Container Release Pipeline
 on:
   push:
     branches: [ "main", "feat/**", "feature/**" ]
-    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -78,15 +77,15 @@ jobs:
           provenance: false
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ steps.ref.outputs.image }}:${{ env.VERSION }}
             ${{ steps.ref.outputs.image }}:sha-${{ github.sha }}
+            ${{ github.event_name == 'workflow_dispatch' && format('{0}:{1}', steps.ref.outputs.image, env.VERSION) || '' }}
 
       - name: Record image identity
         if: github.event_name != 'pull_request'
         run: |
           {
             echo "### Release image"
-            echo "- Version tag: \`${VERSION}\`"
+            echo "- Tags: \`sha-${GITHUB_SHA}\` (the \`${VERSION}\` tag is only moved by a manual workflow_dispatch run)"
             echo "- Source commit: \`${GITHUB_SHA}\`"
             echo "- Digest: \`${{ steps.build-push.outputs.digest }}\`"
             echo "- Pin: \`${{ steps.ref.outputs.image }}@${{ steps.build-push.outputs.digest }}\`"
