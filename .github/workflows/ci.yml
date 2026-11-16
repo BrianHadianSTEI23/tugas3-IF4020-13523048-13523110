@@ -2,26 +2,31 @@ name: CI & Container Release Pipeline
 
 on:
   push:
-    branches: [ "main", "feat/*", "feature/*" ]
+    branches: [ "main", "feat/**", "feature/**" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/norasign
+  VERSION: "1.0.0"
 
 jobs:
   test:
-    name: Unit & Interoperability Tests
+    name: Unit, Scenario, and Interoperability Tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10", "3.12" ]
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
@@ -30,12 +35,10 @@ jobs:
           pip install -e .
 
       - name: Run Test Suite
-        run: |
-          python -m pytest -v tests/
+        run: python -m pytest -v tests/
 
       - name: Run Performance Benchmark (Sample)
-        run: |
-          python scripts/benchmark.py --warmup 1 --runs 5 --out benchmark_summary.md
+        run: python scripts/benchmark.py --warmup 1 --runs 5 --out benchmark_summary.md
 
   build-and-publish:
     name: Build & Publish Container Image (linux/amd64)
@@ -45,16 +48,20 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image_digest: ${{ steps.build-push.outputs.digest }}
-      image_ref: ${{ steps.meta.outputs.tags }}
+      image: ${{ steps.ref.outputs.image }}
+      digest: ${{ steps.build-push.outputs.digest }}
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
 
+      - name: Compute lowercase image name
+        id: ref
+        run: echo "image=${REGISTRY}/${GITHUB_REPOSITORY_OWNER,,}/norasign" >> "$GITHUB_OUTPUT"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry (GHCR)
+      - name: Log in to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
@@ -62,71 +69,61 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=raw,value=1.0.0
-            type=sha,format=short
-
-      - name: Build and Push Docker Image
+      - name: Build and Push Image
         id: build-push
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64
+          provenance: false
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ steps.ref.outputs.image }}:${{ env.VERSION }}
+            ${{ steps.ref.outputs.image }}:sha-${{ github.sha }}
 
-      - name: Print Image Digest
+      - name: Record image identity
+        if: github.event_name != 'pull_request'
         run: |
-          echo "Published Image Digest: ${{ steps.build-push.outputs.digest }}"
+          {
+            echo "### Release image"
+            echo "- Version tag: \`${VERSION}\`"
+            echo "- Source commit: \`${GITHUB_SHA}\`"
+            echo "- Digest: \`${{ steps.build-push.outputs.digest }}\`"
+            echo "- Pin: \`${{ steps.ref.outputs.image }}@${{ steps.build-push.outputs.digest }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   consumer-release-pipeline:
     name: Consumer Pipeline Integration (C01 - C05)
     needs: build-and-publish
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      IMAGE: ${{ needs.build-and-publish.outputs.image }}@${{ needs.build-and-publish.outputs.digest }}
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
 
-      - name: Prepare Test Workspace
+      - name: Pull release image by digest (no credentials)
+        run: docker pull "$IMAGE"
+
+      - name: Run scenarios C01 - C05
+        run: bash scripts/run_ci_scenarios.sh "$IMAGE" ci-evidence
+
+      - name: Publish evidence summary
+        if: always()
         run: |
-          mkdir -p dist out ci keys
-          # Create sample release artifact
-          echo "NoraSign Release Artifact Build Output" > dist/sample-app.tar.gz
+          {
+            echo "### Integration scenarios"
+            echo "Image: \`${IMAGE}\`"
+            echo
+            cat ci-evidence/summary.md
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Generate Ephemeral Test Signing Key
-        run: |
-          # Create test signing keypair
-          docker run --rm --user "$(id -u):$(id -g)" \
-            -v "$PWD/keys:/keys" \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:1.0.0 keygen \
-            --algorithm ed25519 --out /keys/ephemeral_signer
-
-      - name: Run CI Signing Stage (Table 2.14)
-        run: |
-          export IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build-and-publish.outputs.image_digest }}"
-          export SIGNING_KEY_FILE="$PWD/keys/ephemeral_signer.key.pem"
-          trap 'rm -f "$SIGNING_KEY_FILE"' 0
-
-          # Execute sign inside container with --network none and runner user UID:GID
-          docker run --rm --network none \
-            --user "$(id -u):$(id -g)" \
-            -v "$PWD/dist:/input:ro" \
-            -v "$PWD/out:/output" \
-            -v "$SIGNING_KEY_FILE:/run/signing.key.pem:ro" \
-            "$IMAGE" sign \
-            --file /input/sample-app.tar.gz \
-            --package sample-app \
-            --version 1.0.0 \
-            --key /run/signing.key.pem \
-            --out /output/release.bundle.json
-
-          # Verify bundle was generated
-          test -f out/release.bundle.json
-          echo "Artifact and bundle successfully created."
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence
+          path: ci-evidence/
