@@ -51,6 +51,16 @@ where `DER_SPKI` is the raw byte sequence of the SubjectPublicKeyInfo in standar
 
 The container image is published to GitHub Container Registry (GHCR) for the `linux/amd64` architecture.
 
+### Release Identity (Table 2.13)
+
+The workflow `.github/workflows/ci.yml` builds the image from this repository, pushes it to GHCR, and prints the digest in the job summary (job `build-and-publish`). Pipelines pin the image by that digest; the `latest` tag is not published.
+
+| Program version | Repository tag | Image tag | Digest (`sha256`) | Workflow run |
+| :--- | :--- | :--- | :--- | :--- |
+| 1.0.0 | `v1.0.0` | `ghcr.io/brianhadianstei23/norasign:1.0.0` | fill from the run summary | fill with the run URL |
+
+The package must be set to public once in GitHub (Packages, norasign, Package settings, Change visibility) so the image can be pulled without credentials.
+
 ### Pulling Image by Digest
 To satisfy supply-chain security standards and Table 2.13, CI/CD workflows pin the container image using its immutable **SHA-256 digest**:
 
@@ -154,6 +164,27 @@ norasign verify \
   --json
 ```
 
+#### E. Signed SBOM (Bonus 3)
+```bash
+norasign sbom generate --artifact dist/contoh-app.zip --package contoh-app --version 1.0.0 \
+  --component cryptography@46.0.0 --out out/contoh-app.sbom.json
+norasign sbom sign --sbom out/contoh-app.sbom.json --key keys/publisher.key.pem --out out/contoh-app.sbom.bundle.json
+norasign sbom verify --artifact dist/contoh-app.zip --artifact-bundle out/release.bundle.json \
+  --sbom out/contoh-app.sbom.json --sbom-bundle out/contoh-app.sbom.bundle.json \
+  --trust-store ci/trust.json --package contoh-app --version 1.0.0 --json
+```
+The SBOM is a CycloneDX 1.5 JSON whose `metadata.component.hashes` holds the release artifact SHA-256. Data format, parameters, and output are described in `docs/sbom.md`.
+
+### File Formats
+
+| File | Schema | Notes |
+| :--- | :--- | :--- |
+| Manifest | `minisign-manifest/v1` | Canonical JSON, signed bytes, max 16 KiB (`docs/manifest_spec.md`). |
+| Bundle | `minisign-bundle/v1` | `schema`, `manifest_b64`, `signature_b64`, max 64 KiB. |
+| Trust store | `minisign-trust/v1` | `keys[]` of `keyid`, `algorithm`, `public_key_pem`, `packages` (`docs/api_trust.md`). |
+| Verify result | Table 2.9 | `valid`, `status`, `message`, `algorithm`, `keyid`, `package`, `version` (`docs/api_verifier.md`). |
+| SBOM | CycloneDX 1.5 | Signed as a separate artifact (`docs/sbom.md`). |
+
 ---
 
 ## 6. Testing & Benchmarking
@@ -163,6 +194,12 @@ norasign verify \
 pytest -v tests/
 ```
 
+### Running Scenario Suite U01 - U14, Extra Cases, and SBOM Cases
+```bash
+python scripts/run_scenarios.py --out test_cases
+```
+Each scenario folder in `test_cases/` contains the input files (artifacts, bundles, trust stores), the exact command (`*.cmd.txt`), stdout JSON, and stderr. The summary is in `test_cases/results.md` and `test_cases/results.json`. Keys in `test_cases/keys/` are generated only for testing.
+
 ### Running OpenSSL Interoperability Tests
 ```bash
 pytest -v tests/test_interop.py
@@ -170,13 +207,23 @@ pytest -v tests/test_interop.py
 
 ### Running Performance Benchmarks (Table 2.12)
 ```bash
-python scripts/benchmark.py --warmup 5 --runs 30 --out benchmark_results.md
+python scripts/benchmark.py --warmup 5 --runs 30 --out benchmark/benchmark_results.md
 ```
 
-### Running Local CI Container Scenarios (C01 - C05)
+### Running CI Container Scenarios (C01 - C05)
 ```bash
-bash scripts/run_ci_scenarios.sh norasign:local
+docker build -t norasign:local .
+bash scripts/run_ci_scenarios.sh norasign:local ci-evidence
 ```
+The script runs every scenario in a clean directory with `--network none` and the runner UID/GID. It reads the real exit code of each run before reporting, and creates the deploy marker only when `verify` exits 0. Evidence (bundle, `verification.json`, stderr, marker) is written to `ci-evidence/`, with a summary in `ci-evidence/summary.md`. The same script runs in the `consumer-release-pipeline` job against the published image digest, and uploads `ci-evidence` as a workflow artifact.
+
+| ID | Scenario | Expected |
+| :--- | :--- | :--- |
+| C01 | Sign and verify a valid artifact for all three profiles, then create the marker | `OK`, marker present |
+| C02 | Change one byte after signing (same size and name) | `ARTIFACT_MISMATCH`, no marker |
+| C03 | Empty trust store, and a key authorized for another package | `KEY_NOT_TRUSTED`, no marker |
+| C04 | Artifact path that does not exist | `INPUT_ERROR`, exit 2, no marker |
+| C05 | Runner UID/GID, no TTY, `--network none` | Runs normally, network unreachable |
 
 ---
 
