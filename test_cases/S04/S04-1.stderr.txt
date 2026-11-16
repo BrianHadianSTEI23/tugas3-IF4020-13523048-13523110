@@ -1,0 +1,1 @@
+norasign sbom verify: SBOM_BINDING_MISMATCH (binding): SBOM SHA-256 differs from release artifact SHA-256

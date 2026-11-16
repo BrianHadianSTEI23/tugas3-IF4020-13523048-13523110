@@ -1,0 +1,1 @@
+norasign verify --file app_rsa.bin --bundle rsa.sign2.bundle.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

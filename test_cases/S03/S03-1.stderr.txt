@@ -1,0 +1,1 @@
+norasign sbom verify: ARTIFACT_MISMATCH (release): Release bundle rejected: Artifact size mismatch: manifest 16384, file 16401.

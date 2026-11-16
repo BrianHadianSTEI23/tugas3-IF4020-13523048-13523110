@@ -1,0 +1,1 @@
+norasign verify --file app.bin --bundle manifest-too-large.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

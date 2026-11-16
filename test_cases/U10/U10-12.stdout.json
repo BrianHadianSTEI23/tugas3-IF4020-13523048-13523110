@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Manifest format error: Manifest bytes do not match canonical serialization byte-for-byte", "algorithm": null, "keyid": null, "package": null, "version": null}
