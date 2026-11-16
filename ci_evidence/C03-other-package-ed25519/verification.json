@@ -1,0 +1,1 @@
+{"valid": false, "status": "KEY_NOT_TRUSTED", "message": "Key not trusted: key feb70c882e74017e44fdf6691b20fba7d67160584be70bc818be4593bfe2ef8e is not authorized for package 'sample-app'.", "algorithm": "ed25519", "keyid": "feb70c882e74017e44fdf6691b20fba7d67160584be70bc818be4593bfe2ef8e", "package": "sample-app", "version": "1.0.0"}

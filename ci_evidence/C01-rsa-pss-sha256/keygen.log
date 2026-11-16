@@ -1,0 +1,4 @@
+Generated keypair for rsa-pss-sha256:
+  Private key: /keys/signer.key.pem
+  Public key:  /keys/signer.pub.pem
+  Fingerprint: a04636d24080a7141011facd451bb301a128548e029440a1e59c310089b00d25

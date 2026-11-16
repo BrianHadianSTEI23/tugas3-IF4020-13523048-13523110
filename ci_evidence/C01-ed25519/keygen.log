@@ -1,0 +1,4 @@
+Generated keypair for ed25519:
+  Private key: /keys/signer.key.pem
+  Public key:  /keys/signer.pub.pem
+  Fingerprint: 6e9ccda518202f50334f8910e0f73a29318f4165255a9bd3f446149e1dd2865d
