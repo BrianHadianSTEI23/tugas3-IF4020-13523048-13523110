@@ -1,0 +1,5 @@
+Successfully signed release artifact '/input/sample-app.zip'
+  Package:   sample-app v1.0.0
+  Algorithm: ecdsa-p256-sha256
+  Key ID:    27a4bd586563885d04e1e794a7189236fb04a0aee7762f25346dfe4b9eb099c7
+  Bundle:    /output/release.bundle.json
