@@ -1,0 +1,1 @@
+norasign verify --file app_ed25519.bin --bundle ed25519.bitflip.bundle.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

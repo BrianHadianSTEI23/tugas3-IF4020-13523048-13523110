@@ -1,0 +1,1 @@
+norasign verify: KEY_NOT_TRUSTED: Key not trusted: key 98075c0dd602b565153ee50c8fb6aba3c172a654f7a28a8cbff9c52afaa27e10 is not authorized for package 'contoh-app'.

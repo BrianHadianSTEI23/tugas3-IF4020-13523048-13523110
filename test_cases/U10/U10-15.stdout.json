@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Trust store format error: keys[0].packages contains invalid package name '*'", "algorithm": "ed25519", "keyid": "ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc", "package": "contoh-app", "version": "1.0.0"}

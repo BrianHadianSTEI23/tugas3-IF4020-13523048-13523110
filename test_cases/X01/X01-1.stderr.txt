@@ -1,0 +1,1 @@
+norasign verify: KEY_NOT_TRUSTED: Key not trusted: key ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc is trusted for profile 'ed25519', manifest uses 'ecdsa-p256-sha256'.

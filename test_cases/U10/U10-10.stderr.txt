@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Manifest format error: Manifest size (17297 bytes) exceeds maximum 16384 bytes

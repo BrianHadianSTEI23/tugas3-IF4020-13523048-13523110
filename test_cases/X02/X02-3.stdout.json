@@ -1,0 +1,1 @@
+{"valid": false, "status": "INVALID_SIGNATURE", "message": "Signature length 72 bytes, expected 64.", "algorithm": "ecdsa-p256-sha256", "keyid": "5b5fae2cb588f5968bf47041a7a025ad1e5eccd1ca49e9bc51cfd643dd2e11e7", "package": "contoh-app", "version": "1.0.0"}

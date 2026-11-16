@@ -1,0 +1,48 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:650c6cba-cb51-43e7-8c47-158f007e64a0",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-16T05:42:37Z",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "norasign",
+          "version": "1.0.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "bom-ref": "contoh-app@1.0.0",
+      "name": "contoh-app",
+      "version": "1.0.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a1f259d4365ed4320c377ce26f5c8c56dcdc9a89e7b641bfd8eabfbbeac86654"
+        }
+      ],
+      "properties": [
+        {
+          "name": "norasign:artifact:name",
+          "value": "app.bin"
+        },
+        {
+          "name": "norasign:artifact:size",
+          "value": "16384"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:cryptography@46.0.0",
+      "name": "cryptography",
+      "version": "46.0.0"
+    }
+  ]
+}

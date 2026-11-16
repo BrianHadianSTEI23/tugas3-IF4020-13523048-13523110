@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Bundle format error: Base64 string contains forbidden whitespace characters", "algorithm": null, "keyid": null, "package": null, "version": null}

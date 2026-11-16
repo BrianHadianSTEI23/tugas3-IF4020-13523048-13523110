@@ -157,113 +157,95 @@ def cmd_sign(args: argparse.Namespace) -> int:
 
 
 def cmd_verify(args: argparse.Namespace) -> int:
-    """Handle `verify` subcommand (delegated to Component 4)."""
-    try:
-        from norasign.verifier import verify_release
-        result = verify_release(
-            file_path=args.file,
-            bundle_path=args.bundle,
-            trust_store_path=args.trust_store,
-            package=args.package,
-            version=args.version,
-            json_output=args.json,
-        )
-        # If verify_release returns a status dict:
-        if isinstance(result, dict) and result.get("valid") is True:
-            return EXIT_SUCCESS
-        return 1
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
-    except Exception as e:
-        sys.stderr.write(f"Verification error: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
+    """Handle `verify` subcommand (Component 4)."""
+    from norasign.verifier import exit_code_for, verify_release
+    result = verify_release(
+        file_path=args.file,
+        bundle_path=args.bundle,
+        trust_store_path=args.trust_store,
+        package=args.package,
+        version=args.version,
+        json_output=args.json,
+    )
+    return exit_code_for(result["status"])
 
 
 def cmd_trust_add(args: argparse.Namespace) -> int:
-    """Handle `trust add` subcommand (delegated to Component 3)."""
+    """Handle `trust add` subcommand (Component 3)."""
     try:
         from norasign.trust import trust_add
         trust_add(key_path=args.key, package=args.package, store_path=args.store)
         return EXIT_SUCCESS
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
     except Exception as e:
         sys.stderr.write(f"Trust add error: {e}\n")
         return EXIT_USAGE_OR_IO_ERROR
 
 
 def cmd_trust_list(args: argparse.Namespace) -> int:
-    """Handle `trust list` subcommand (delegated to Component 3)."""
+    """Handle `trust list` subcommand (Component 3)."""
     try:
         from norasign.trust import trust_list
         trust_list(store_path=args.store)
         return EXIT_SUCCESS
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
     except Exception as e:
         sys.stderr.write(f"Trust list error: {e}\n")
         return EXIT_USAGE_OR_IO_ERROR
 
 
 def cmd_trust_remove(args: argparse.Namespace) -> int:
-    """Handle `trust remove` subcommand (delegated to Component 3)."""
+    """Handle `trust remove` subcommand (Component 3)."""
     try:
         from norasign.trust import trust_remove
         trust_remove(keyid=args.keyid, store_path=args.store)
         return EXIT_SUCCESS
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
     except Exception as e:
         sys.stderr.write(f"Trust remove error: {e}\n")
         return EXIT_USAGE_OR_IO_ERROR
 
 
 def cmd_sbom_generate(args: argparse.Namespace) -> int:
-    """Handle `sbom generate` subcommand (delegated to Component 5)."""
+    """Handle `sbom generate` subcommand (Component 5)."""
     try:
         from norasign.sbom import generate_sbom
         generate_sbom(
             artifact_path=args.artifact,
             out_path=args.out,
-            package=args.package or "",
-            version=args.version or "",
+            package=args.package,
+            version=args.version,
+            components=args.component or [],
+            scan_archive=not args.no_scan,
         )
         return EXIT_SUCCESS
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
     except Exception as e:
         sys.stderr.write(f"SBOM generate error: {e}\n")
         return EXIT_USAGE_OR_IO_ERROR
 
 
-def cmd_sbom_verify(args: argparse.Namespace) -> int:
-    """Handle `sbom verify` subcommand (delegated to Component 5)."""
+def cmd_sbom_sign(args: argparse.Namespace) -> int:
+    """Handle `sbom sign` subcommand (Component 5)."""
     try:
-        from norasign.sbom import verify_sbom
-        result = verify_sbom(
-            artifact_path=args.artifact,
-            artifact_bundle_path=args.artifact_bundle,
-            sbom_path=args.sbom,
-            sbom_bundle_path=args.sbom_bundle,
-            trust_store_path=args.trust_store,
-            package=args.package,
-            version=args.version,
-            json_output=args.json,
-        )
-        if isinstance(result, dict) and result.get("valid") is True:
-            return EXIT_SUCCESS
-        return 1
-    except NotImplementedError as e:
-        sys.stderr.write(f"Notice: {e}\n")
-        return EXIT_USAGE_OR_IO_ERROR
+        from norasign.sbom import sign_sbom
+        sign_sbom(sbom_path=args.sbom, key_path=args.key, out_path=args.out)
+        return EXIT_SUCCESS
     except Exception as e:
-        sys.stderr.write(f"SBOM verify error: {e}\n")
+        sys.stderr.write(f"SBOM sign error: {e}\n")
         return EXIT_USAGE_OR_IO_ERROR
+
+
+def cmd_sbom_verify(args: argparse.Namespace) -> int:
+    """Handle `sbom verify` subcommand (Component 5)."""
+    from norasign.sbom import verify_sbom
+    result = verify_sbom(
+        artifact_path=args.artifact,
+        artifact_bundle_path=args.artifact_bundle,
+        sbom_path=args.sbom,
+        sbom_bundle_path=args.sbom_bundle,
+        trust_store_path=args.trust_store,
+        package=args.package,
+        version=args.version,
+        json_output=args.json,
+    )
+    return result["exit_code"]
 
 
 def build_parser() -> NoraSignArgumentParser:
@@ -313,12 +295,13 @@ def build_parser() -> NoraSignArgumentParser:
 
     # 3. verify
     p_verify = subparsers.add_parser("verify", help="Verify a release artifact against bundle and trust store")
-    p_verify.add_argument("--file", required=True, help="Path to release artifact file")
-    p_verify.add_argument("--bundle", required=True, help="Path to release bundle JSON")
-    p_verify.add_argument("--trust-store", required=True, help="Path to trust store JSON")
-    p_verify.add_argument("--package", required=True, help="Expected package name")
-    p_verify.add_argument("--version", required=True, help="Expected version")
+    p_verify.add_argument("--file", help="Path to release artifact file")
+    p_verify.add_argument("--bundle", help="Path to release bundle JSON")
+    p_verify.add_argument("--trust-store", help="Path to trust store JSON")
+    p_verify.add_argument("--package", help="Expected package name")
+    p_verify.add_argument("--version", help="Expected version")
     p_verify.add_argument("--json", action="store_true", help="Format output as JSON on stdout")
+    # verify options are checked by the verifier so --json still reports INPUT_ERROR
     p_verify.set_defaults(func=cmd_verify)
 
     # 4. trust
@@ -351,9 +334,20 @@ def build_parser() -> NoraSignArgumentParser:
     p_sbom_gen = sbom_sub.add_parser("generate", help="Generate JSON SBOM referencing artifact hash")
     p_sbom_gen.add_argument("--artifact", required=True, help="Path to release artifact")
     p_sbom_gen.add_argument("--out", required=True, help="Output path for SBOM JSON")
-    p_sbom_gen.add_argument("--package", default="", help="Package name")
-    p_sbom_gen.add_argument("--version", default="", help="Release version")
+    p_sbom_gen.add_argument("--package", required=True, help="Package name")
+    p_sbom_gen.add_argument("--version", required=True, help="Release version")
+    p_sbom_gen.add_argument(
+        "--component", action="append", metavar="NAME@VERSION", help="Declared dependency, repeatable"
+    )
+    p_sbom_gen.add_argument("--no-scan", action="store_true", help="Do not list zip/tar archive members")
     p_sbom_gen.set_defaults(func=cmd_sbom_generate)
+
+    # sbom sign
+    p_sbom_sign = sbom_sub.add_parser("sign", help="Sign an SBOM as a separate artifact bundle")
+    p_sbom_sign.add_argument("--sbom", required=True, help="Path to SBOM JSON")
+    p_sbom_sign.add_argument("--key", required=True, help="Path to signer private key PEM")
+    p_sbom_sign.add_argument("--out", required=True, help="Path for output SBOM bundle JSON")
+    p_sbom_sign.set_defaults(func=cmd_sbom_sign)
 
     # sbom verify
     p_sbom_ver = sbom_sub.add_parser("verify", help="Verify release artifact and SBOM dual bundles")

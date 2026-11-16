@@ -1,0 +1,1 @@
+norasign verify: INPUT_ERROR: cannot read trust store 'missing-trust.json': No such file or directory

@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Trust store format error: keys[0].packages contains invalid package name '*'

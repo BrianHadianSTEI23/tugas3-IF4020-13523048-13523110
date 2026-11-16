@@ -1,0 +1,1 @@
+norasign verify --file app_ecdsa.bin --bundle ecdsa.bitflip.bundle.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

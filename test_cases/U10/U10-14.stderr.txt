@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Trust store format error: keys[2].algorithm 'ecdsa-p256-sha256' does not match key type 'ed25519'

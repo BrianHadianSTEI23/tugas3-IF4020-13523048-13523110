@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Trust store format error: trust store JSON invalid: Expecting value: line 1 column 39 (char 38)", "algorithm": "ed25519", "keyid": "ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc", "package": "contoh-app", "version": "1.0.0"}

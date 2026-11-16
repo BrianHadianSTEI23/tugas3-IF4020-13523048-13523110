@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Manifest format error: Failed to parse manifest JSON: Duplicate field detected in JSON: 'version'

@@ -1,0 +1,1 @@
+norasign verify: INVALID_SIGNATURE: Signature length 72 bytes, expected 64.

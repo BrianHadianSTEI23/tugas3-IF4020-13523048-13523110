@@ -1,0 +1,1 @@
+norasign verify: METADATA_MISMATCH: Version mismatch: manifest '1.0.0', expected '2.0.0'.
