@@ -90,13 +90,32 @@ norasign verify --file <path> --bundle <bundle.json> --trust-store <trust.json> 
 ```bash
 norasign trust add --key <public.pem> --package <name> --store <trust.json>
 ```
+Creates the store if missing. Prints fingerprint, algorithm, and authorized packages. Adding a known key for a new package appends to its `packages`; repeating an existing pair changes nothing.
 
 ### List Trusted Keys
 ```bash
 norasign trust list --store <trust.json>
 ```
+Prints one line per key: fingerprint, profile, and comma-separated packages.
 
 ### Remove Key Authorization
 ```bash
 norasign trust remove --keyid <fingerprint> --store <trust.json>
+```
+Removes the entry. Exit code `2` if the keyid is not found.
+
+### Exit Codes
+- `0`: Success.
+- `2`: Invalid key, invalid package name, malformed store, I/O error, or keyid not found.
+
+---
+
+## 5. Signed SBOM (`sbom`)
+
+See [Signed SBOM](sbom.md) for the data format and output tables.
+
+```bash
+norasign sbom generate --artifact <path> --package <name> --version <ver> [--component NAME@VERSION]... --out <sbom.json>
+norasign sbom sign --sbom <sbom.json> --key <private.pem> --out <sbom.bundle.json>
+norasign sbom verify --artifact <path> --artifact-bundle <bundle.json> --sbom <sbom.json> --sbom-bundle <sbom.bundle.json> --trust-store <trust.json> --package <name> --version <ver> [--json]
 ```
