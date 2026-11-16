@@ -62,3 +62,10 @@ Thumbs.db
 
 # Documentation build
 site/
+
+# Test-only keys and bundles used by scenario tests
+!test_cases/keys/
+!test_cases/**/*.key.pem
+!test_cases/**/*.pub.pem
+!test_cases/**/*.bundle.json
+.venv/

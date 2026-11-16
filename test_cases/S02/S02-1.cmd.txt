@@ -1,0 +1,1 @@
+norasign sbom verify --artifact app.bin --artifact-bundle app.bin.bundle.json --sbom app.sbom.json --sbom-bundle app.sbom.bundle.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

@@ -1,0 +1,1 @@
+norasign verify --file empty.dat --bundle empty.dat.bundle.json --trust-store ../../trust.json --package contoh-app --version 1.0.0 --json

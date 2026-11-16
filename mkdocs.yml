@@ -35,6 +35,9 @@ nav:
       - Crypto Engine: api_crypto.md
       - Manifest Module: api_manifest.md
       - Bundle Module: api_bundle.md
+      - Trust Store Module: api_trust.md
+      - Verifier Module: api_verifier.md
+  - Signed SBOM: sbom.md
   - CI/CD & Docker: container_guide.md
   - Video Demo Guide: video_demo_guide.md
 

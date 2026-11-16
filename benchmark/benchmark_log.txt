@@ -1,0 +1,45 @@
+Starting NoraSign Benchmark Suite: Warmup=5, Runs=30
+
+[1/5] Benchmarking Key Generation...
+  rsa-pss-sha256     -> Median: 155.205 ms, P95: 242.559 ms
+  ecdsa-p256-sha256  -> Median: 0.014 ms, P95: 0.082 ms
+  ed25519            -> Median: 0.032 ms, P95: 0.250 ms
+
+[2/5] Benchmarking Artifact Hashing (SHA-256)...
+  1 KB     -> Median: 0.001 ms, P95: 0.001 ms
+  10 MB    -> Median: 6.335 ms, P95: 6.952 ms
+  50 MB    -> Median: 33.360 ms, P95: 36.938 ms
+
+[3/5] Benchmarking Pure Crypto Sign & Verify over Manifest...
+  rsa-pss-sha256     -> Sign Median: 0.835 ms (P95: 0.930 ms) | Verify Median: 0.052 ms (P95: 0.067 ms)
+  ecdsa-p256-sha256  -> Sign Median: 0.029 ms (P95: 0.045 ms) | Verify Median: 0.074 ms (P95: 0.095 ms)
+  ed25519            -> Sign Median: 0.035 ms (P95: 0.050 ms) | Verify Median: 0.111 ms (P95: 0.148 ms)
+
+[4/5] Benchmarking End-to-End CLI Execution (Sign)...
+  rsa-pss-sha256     [1 KB  ] -> Median: 176.466 ms, P95: 228.974 ms
+  rsa-pss-sha256     [10 MB ] -> Median: 190.368 ms, P95: 337.111 ms
+  rsa-pss-sha256     [50 MB ] -> Median: 224.029 ms, P95: 240.559 ms
+  ecdsa-p256-sha256  [1 KB  ] -> Median: 68.004 ms, P95: 70.483 ms
+  ecdsa-p256-sha256  [10 MB ] -> Median: 78.477 ms, P95: 112.827 ms
+  ecdsa-p256-sha256  [50 MB ] -> Median: 117.050 ms, P95: 163.716 ms
+  ed25519            [1 KB  ] -> Median: 68.177 ms, P95: 78.765 ms
+  ed25519            [10 MB ] -> Median: 77.500 ms, P95: 92.777 ms
+  ed25519            [50 MB ] -> Median: 118.707 ms, P95: 131.648 ms
+
+[4b/5] Benchmarking End-to-End CLI Execution (Verify)...
+  rsa-pss-sha256     [1 KB  ] -> Median: 67.393 ms, P95: 84.861 ms
+  rsa-pss-sha256     [10 MB ] -> Median: 77.110 ms, P95: 79.944 ms
+  rsa-pss-sha256     [50 MB ] -> Median: 110.823 ms, P95: 117.829 ms
+  ecdsa-p256-sha256  [1 KB  ] -> Median: 67.605 ms, P95: 83.049 ms
+  ecdsa-p256-sha256  [10 MB ] -> Median: 75.372 ms, P95: 93.653 ms
+  ecdsa-p256-sha256  [50 MB ] -> Median: 112.676 ms, P95: 122.675 ms
+  ed25519            [1 KB  ] -> Median: 69.009 ms, P95: 72.734 ms
+  ed25519            [10 MB ] -> Median: 78.253 ms, P95: 91.493 ms
+  ed25519            [50 MB ] -> Median: 109.571 ms, P95: 111.990 ms
+
+[5/5] Measuring Component Sizes...
+  rsa-pss-sha256     -> PrivKey DER: 1795 B, PubKey DER: 422 B, Sig Raw: 384 B, Bundle: 794 B
+  ecdsa-p256-sha256  -> PrivKey DER: 138 B, PubKey DER: 91 B, Sig Raw: 64 B, Bundle: 370 B
+  ed25519            -> PrivKey DER: 48 B, PubKey DER: 44 B, Sig Raw: 64 B, Bundle: 370 B
+
+Benchmark completed successfully! Report written to: benchmark/benchmark_results.md (raw: benchmark/benchmark_results_raw.json)

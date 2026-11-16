@@ -10,6 +10,7 @@ import hashlib
 import json
 import math
 import os
+import platform
 from pathlib import Path
 import shutil
 import statistics
@@ -57,6 +58,7 @@ def measure_key_generation(algo: str, count: int = 10) -> Dict[str, float]:
     return {
         "median_ms": statistics.median(durations_ms),
         "p95_ms": calculate_p95(durations_ms),
+        "samples_ms": durations_ms,
     }
 
 
@@ -78,6 +80,7 @@ def measure_artifact_hash(file_path: str, warmup: int = 5, runs: int = 30) -> Di
     return {
         "median_ms": statistics.median(durations_ms),
         "p95_ms": calculate_p95(durations_ms),
+        "samples_ms": durations_ms,
     }
 
 
@@ -112,10 +115,12 @@ def measure_crypto_sign_verify(
     res_sign = {
         "median_ms": statistics.median(sign_ms),
         "p95_ms": calculate_p95(sign_ms),
+        "samples_ms": sign_ms,
     }
     res_verify = {
         "median_ms": statistics.median(verify_ms),
         "p95_ms": calculate_p95(verify_ms),
+        "samples_ms": verify_ms,
     }
     return res_sign, res_verify
 
@@ -156,6 +161,44 @@ def measure_end_to_end_cli(
         return {
             "median_ms": statistics.median(durations_ms),
             "p95_ms": calculate_p95(durations_ms),
+            "samples_ms": durations_ms,
+        }
+
+
+def measure_end_to_end_verify(
+    algo: str,
+    artifact_path: str,
+    warmup: int = 5,
+    runs: int = 30,
+) -> Dict[str, float]:
+    """Measure End-to-End CLI verify execution duration (I/O, hashing, parsing, output)."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        key_prefix = os.path.join(tmpdir, "signer")
+        save_keypair_files(algo, key_prefix)
+        bundle_out = os.path.join(tmpdir, "release.bundle.json")
+        store = os.path.join(tmpdir, "trust.json")
+        base = ["python3", "-m", "norasign.cli"]
+        subprocess.run(base + ["trust", "add", "--key", key_prefix + ".pub.pem", "--package", "benchmark-pkg",
+                               "--store", store], capture_output=True, check=True)
+        subprocess.run(base + ["sign", "--file", artifact_path, "--package", "benchmark-pkg", "--version", "1.0.0",
+                               "--key", key_prefix + ".key.pem", "--out", bundle_out], capture_output=True, check=True)
+        cmd = base + ["verify", "--file", artifact_path, "--bundle", bundle_out, "--trust-store", store,
+                      "--package", "benchmark-pkg", "--version", "1.0.0", "--json"]
+
+        for _ in range(warmup):
+            subprocess.run(cmd, capture_output=True, check=True)
+
+        durations_ms = []
+        for _ in range(runs):
+            t0 = time.perf_counter_ns()
+            subprocess.run(cmd, capture_output=True, check=True)
+            t1 = time.perf_counter_ns()
+            durations_ms.append((t1 - t0) / 1_000_000.0)
+
+        return {
+            "median_ms": statistics.median(durations_ms),
+            "p95_ms": calculate_p95(durations_ms),
+            "samples_ms": durations_ms,
         }
 
 
@@ -251,6 +294,16 @@ def main():
                 print(f"  {algo:18s} [{label:6s}] -> Median: {e_stat['median_ms']:.3f} ms, P95: {e_stat['p95_ms']:.3f} ms")
         results["e2e_sign"] = e2e_res
 
+        print("\n[4b/5] Benchmarking End-to-End CLI Execution (Verify)...")
+        e2e_v = {}
+        for algo in SUPPORTED_ALGORITHMS:
+            e2e_v[algo] = {}
+            for label, path in artifact_paths.items():
+                e_stat = measure_end_to_end_verify(algo, path, warmup=args.warmup, runs=args.runs)
+                e2e_v[algo][label] = e_stat
+                print(f"  {algo:18s} [{label:6s}] -> Median: {e_stat['median_ms']:.3f} ms, P95: {e_stat['p95_ms']:.3f} ms")
+        results["e2e_verify"] = e2e_v
+
         # 5. Sizes
         print("\n[5/5] Measuring Component Sizes...")
         sizes_res = {}
@@ -293,13 +346,35 @@ def main():
             for sz, d in by_sz.items():
                 f.write(f"| `{algo}` | {sz} | {d['median_ms']:.3f} | {d['p95_ms']:.3f} |\n")
 
+        f.write("\n## 4b. End-to-End CLI Verify Execution\n\n")
+        f.write("| Algorithm | Artifact Size | Median (ms) | P95 (ms) |\n")
+        f.write("| :--- | :--- | :---: | :---: |\n")
+        for algo, by_sz in results["e2e_verify"].items():
+            for sz, d in by_sz.items():
+                f.write(f"| `{algo}` | {sz} | {d['median_ms']:.3f} | {d['p95_ms']:.3f} |\n")
+
         f.write("\n## 5. Component Sizes in Bytes\n\n")
         f.write("| Algorithm | Private Key DER (B) | Public Key DER (B) | Raw Signature (B) | Bundle JSON (B) |\n")
         f.write("| :--- | :---: | :---: | :---: | :---: |\n")
         for algo, s in results["sizes"].items():
             f.write(f"| `{algo}` | {s['priv_key_der_bytes']} | {s['pub_key_der_bytes']} | {s['signature_raw_bytes']} | {s['bundle_bytes']} |\n")
 
-    print(f"\nBenchmark completed successfully! Report written to: {args.out}")
+    raw_path = os.path.splitext(args.out)[0] + "_raw.json"
+    env = {
+        "python": sys.version.split()[0],
+        "platform": platform.platform(),
+        "processor": platform.processor() or platform.machine(),
+        "cpu_count": os.cpu_count(),
+        "cryptography": __import__("cryptography").__version__,
+        "warmup": args.warmup,
+        "runs": args.runs,
+        "timer": "time.perf_counter_ns (monotonic)",
+        "percentile": "nearest-rank, index ceil(0.95*n), 1-based",
+    }
+    with open(raw_path, "w") as f:
+        json.dump({"environment": env, "results": results}, f, indent=2)
+
+    print(f"\nBenchmark completed successfully! Report written to: {args.out} (raw: {raw_path})")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1 @@
+{"valid": false, "status": "METADATA_MISMATCH", "message": "Artifact name mismatch: manifest 'app.bin', file 'app-renamed.bin'.", "algorithm": "ed25519", "keyid": "ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc", "package": "contoh-app", "version": "1.0.0"}

@@ -1,0 +1,1 @@
+norasign sbom verify: ARTIFACT_MISMATCH (sbom): SBOM bundle rejected: Artifact size mismatch: manifest 1047, file 1141.

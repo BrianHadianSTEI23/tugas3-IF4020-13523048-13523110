@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Bundle format error: Invalid Base64 encoding: Incorrect padding

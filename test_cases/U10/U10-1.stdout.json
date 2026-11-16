@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Bundle format error: Failed to parse bundle JSON: Duplicate field detected in JSON: 'manifest_b64'", "algorithm": null, "keyid": null, "package": null, "version": null}

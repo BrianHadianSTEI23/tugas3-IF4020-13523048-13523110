@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Trust store format error: trust store JSON invalid: Expecting value: line 1 column 39 (char 38)

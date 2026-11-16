@@ -1,0 +1,1 @@
+norasign verify: UNSUPPORTED_ALGORITHM: Algorithm 'ed448' is not supported.

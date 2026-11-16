@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Bundle format error: Failed to parse bundle JSON: Duplicate field detected in JSON: 'manifest_b64'

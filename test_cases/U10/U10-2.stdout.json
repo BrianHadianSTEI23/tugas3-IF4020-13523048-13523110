@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Manifest format error: Failed to parse manifest JSON: Duplicate field detected in JSON: 'version'", "algorithm": null, "keyid": null, "package": null, "version": null}

@@ -1,0 +1,1 @@
+norasign verify --file app.bin --bundle app.bin.bundle.json --trust-store trust-wrong-fingerprint.json --package contoh-app --version 1.0.0 --json

@@ -1,0 +1,1 @@
+{"valid": false, "status": "METADATA_MISMATCH", "message": "Version mismatch: manifest '1.0.0', expected '2.0.0'.", "algorithm": "ed25519", "keyid": "ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc", "package": "contoh-app", "version": "1.0.0"}
