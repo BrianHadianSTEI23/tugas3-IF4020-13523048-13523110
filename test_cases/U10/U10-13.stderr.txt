@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Trust store format error: keys[0].keyid does not match fingerprint of public_key_pem

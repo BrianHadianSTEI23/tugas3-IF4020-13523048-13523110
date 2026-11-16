@@ -1,0 +1,1 @@
+{"valid": false, "status": "INVALID_SIGNATURE", "message": "Signature does not verify against the trusted key.", "algorithm": "rsa-pss-sha256", "keyid": "e2a76443d1d095b42e1b621d2934e36afa97f396ca9cad391dbcc17ab8d46740", "package": "contoh-app", "version": "1.0.0"}

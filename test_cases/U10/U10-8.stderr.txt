@@ -1,0 +1,1 @@
+norasign verify: FORMAT_ERROR: Bundle format error: Base64 string contains forbidden whitespace characters

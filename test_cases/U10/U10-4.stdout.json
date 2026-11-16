@@ -1,0 +1,1 @@
+{"valid": false, "status": "FORMAT_ERROR", "message": "Manifest format error: Artifact size must be an integer, got bool", "algorithm": null, "keyid": null, "package": null, "version": null}

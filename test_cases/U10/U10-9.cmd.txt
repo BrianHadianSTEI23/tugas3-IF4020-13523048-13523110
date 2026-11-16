@@ -1,0 +1,1 @@
+norasign verify --file app.bin --bundle base64-url-safe.json --trust-store ../trust.json --package contoh-app --version 1.0.0 --json

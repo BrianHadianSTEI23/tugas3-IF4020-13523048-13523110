@@ -1,0 +1,29 @@
+{
+  "schema": "minisign-trust/v1",
+  "keys": [
+    {
+      "keyid": "e2a76443d1d095b42e1b621d2934e36afa97f396ca9cad391dbcc17ab8d46740",
+      "algorithm": "rsa-pss-sha256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAlsBb4dWWMCo7YpsvHGMR\nHF21FIy188HIkIQo8f9aL9FNuG6+KwKIt9lqBEH38jf1j/phe8lnQKKOoaXUtI+Y\njcH9GIHd/CvAHkhqSjI4om11cYHZGoVgo9+bk5NxCKKyyfH6ejizkXEf8B9Lvk9t\n1glDrNwKIS+KL4kpj6y0Fcvpj27XPmwu6eZdqGRRoAXPDLkE+VG2tGKWjihLRGFe\n4D2OgcBawF+o/UWWZPiYAmKZv+X3HiHMKshH52P2VrdP4tW/9r9LMzaW5hgmMpLj\nZA/sB3MCu8qMJEfBCJuKEAQd7QXlhFDgfM026c+QYjsq5pyuzj2YgrnkSYkzIWpN\ngnPJDpQdfUz8JpKaKacy2aYNCh7Dgw+h3gUPvZMmlsnRKR4f8ClKAkd8ChM4UEby\nwnhBC4w+V80+bXjbKa9M4h7zUOVP35hjJvkzzua9OP+UBe19PeP1FCT7soM5NWiO\npblNbWW3rsmaPP9Y+l3GWcxL4jvHC+EVy2cP8K+isCb/AgMBAAE=\n-----END PUBLIC KEY-----\n",
+      "packages": [
+        "contoh-app"
+      ]
+    },
+    {
+      "keyid": "5b5fae2cb588f5968bf47041a7a025ad1e5eccd1ca49e9bc51cfd643dd2e11e7",
+      "algorithm": "ecdsa-p256-sha256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtg5r47LJc88qSjKyt3908ZjeAOuJ\nXeakHmvC7jvgdCk/XPMZP929pbKfoemBpKLI0GFj6uO7SxR780kd+mEFiQ==\n-----END PUBLIC KEY-----\n",
+      "packages": [
+        "contoh-app"
+      ]
+    },
+    {
+      "keyid": "ddb119502d3d1133097babe673001c52e6191ec4490dc2fecd948d2eea879fbc",
+      "algorithm": "ecdsa-p256-sha256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAE6CdCOgsm2wCJuJ/ud/2tYX4UXsiU2p2c9h9wKuUZGY=\n-----END PUBLIC KEY-----\n",
+      "packages": [
+        "contoh-app"
+      ]
+    }
+  ]
+}
