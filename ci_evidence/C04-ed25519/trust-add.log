@@ -1,0 +1,4 @@
+Trust store: /ci/trust.json (added)
+  Fingerprint: ef0216b64c72a17442dfb0166a7ddb4d661b0c909e0639462c6f692228637eeb
+  Algorithm:   ed25519
+  Packages:    sample-app

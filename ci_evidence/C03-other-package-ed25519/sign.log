@@ -1,0 +1,5 @@
+Successfully signed release artifact '/input/sample-app.zip'
+  Package:   sample-app v1.0.0
+  Algorithm: ed25519
+  Key ID:    feb70c882e74017e44fdf6691b20fba7d67160584be70bc818be4593bfe2ef8e
+  Bundle:    /output/release.bundle.json

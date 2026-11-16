@@ -55,32 +55,42 @@ The container image is published to GitHub Container Registry (GHCR) for the `li
 
 The workflow `.github/workflows/ci.yml` builds the image from this repository, pushes it to GHCR, and prints the digest in the job summary (job `build-and-publish`). Pipelines pin the image by that digest; the `latest` tag is not published.
 
-| Program version | Repository tag | Image tag | Digest (`sha256`) | Workflow run |
-| :--- | :--- | :--- | :--- | :--- |
-| 1.0.0 | `v1.0.0` | `ghcr.io/brianhadianstei23/norasign:1.0.0` | fill from the run summary | fill with the run URL |
+| Program version | Repository tag | Image tag | Digest (`sha256`) | Built from commit | Workflow run |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1.0.0 | `v1.0.0` | `ghcr.io/brianhadianstei23/norasign:1.0.0` | `sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2` | `8d6f103` | [run 43832817019](https://github.com/BrianHadianSTEI23/tugas3-IF4020-13523048-13523110/actions/runs/43832817019) |
 
-The package must be set to public once in GitHub (Packages, norasign, Package settings, Change visibility) so the image can be pulled without credentials.
+Pinned reference:
+
+```
+ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+```
+
+The image was built from commit `8d6f103`, and scenarios C01 to C05 ran against exactly this digest in the same run (job `consumer-release-pipeline`). Commits after `8d6f103` only change documentation, tests, and the workflow: `git diff 8d6f103 v1.0.0 -- norasign pyproject.toml requirements.txt Dockerfile` is empty. Pushes to `main` publish only a `sha-<commit>` tag, so the `1.0.0` tag keeps pointing to this digest; it is moved only by a manual `workflow_dispatch` run. A sanitized copy of the run log and the evidence of every scenario are stored in `ci_evidence/`.
+
+The package is public, so the image can be pulled without credentials.
 
 ### Pulling Image by Digest
 To satisfy supply-chain security standards and Table 2.13, CI/CD workflows pin the container image using its immutable **SHA-256 digest**:
 
 ```bash
-docker pull ghcr.io/brianhadianstei23/norasign:1.0.0
-# Or by digest:
-# docker pull ghcr.io/brianhadianstei23/norasign@sha256:<digest>
+docker pull ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+# Or by tag:
+# docker pull ghcr.io/brianhadianstei23/norasign:1.0.0
 ```
 
 ### Execution Contract on Runner
 The image runs with **zero runtime network access** (`--network none`) and supports non-root execution matching the runner user (`--user "$(id -u):$(id -g)"`):
 
 ```bash
+IMAGE=ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+
 # 1. Sign Artifact in CI Runner
 docker run --rm --network none \
   --user "$(id -u):$(id -g)" \
   -v "$PWD/dist:/input:ro" \
   -v "$PWD/out:/output" \
   -v "$SIGNING_KEY_FILE:/run/signing.key.pem:ro" \
-  ghcr.io/brianhadianstei23/norasign:1.0.0 sign \
+  "$IMAGE" sign \
   --file /input/my-app.tar.gz \
   --package my-app \
   --version 1.0.0 \
@@ -93,7 +103,7 @@ docker run --rm --network none \
   -v "$PWD/dist:/input:ro" \
   -v "$PWD/out:/output:ro" \
   -v "$PWD/ci/trust.json:/trust.json:ro" \
-  ghcr.io/brianhadianstei23/norasign:1.0.0 verify \
+  "$IMAGE" verify \
   --file /input/my-app.tar.gz \
   --bundle /output/release.bundle.json \
   --trust-store /trust.json \
