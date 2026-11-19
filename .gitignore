@@ -70,3 +70,6 @@ site/
 !test_cases/**/*.bundle.json
 .venv/
 !ci_evidence/**/*.bundle.json
+
+# Public keys of the CI trust store (test-only, public)
+!ci/*.pub.pem

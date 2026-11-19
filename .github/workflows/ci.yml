@@ -107,7 +107,15 @@ jobs:
       - name: Pull release image by digest (no credentials)
         run: docker pull "$IMAGE"
 
+      # Trust store (ci/trust.json) comes from this trusted repository checkout, never from a
+      # bundle. The test-only signing keys come from CI/CD secrets; the script writes each one
+      # to a 0600 temp file, mounts it read-only into the sign container and deletes it.
+      # The verify containers never receive a private key.
       - name: Run scenarios C01 - C05
+        env:
+          CI_SIGNING_KEY_ED25519: ${{ secrets.CI_SIGNING_KEY_ED25519 }}
+          CI_SIGNING_KEY_ECDSA: ${{ secrets.CI_SIGNING_KEY_ECDSA }}
+          CI_SIGNING_KEY_RSA: ${{ secrets.CI_SIGNING_KEY_RSA }}
         run: bash scripts/run_ci_scenarios.sh "$IMAGE" ci-evidence
 
       - name: Publish evidence summary

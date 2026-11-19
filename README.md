@@ -223,8 +223,18 @@ python scripts/benchmark.py --warmup 5 --runs 30 --out benchmark/benchmark_resul
 ### Running CI Container Scenarios (C01 - C05)
 ```bash
 docker build -t norasign:local .
+# Test-only signing keys, passed as environment variables exactly like CI secrets:
+export CI_SIGNING_KEY_ED25519="$(cat ci-keys/ci-ed25519.key.pem)"
+export CI_SIGNING_KEY_ECDSA="$(cat ci-keys/ci-ecdsa-p256-sha256.key.pem)"
+export CI_SIGNING_KEY_RSA="$(cat ci-keys/ci-rsa-pss-sha256.key.pem)"
 bash scripts/run_ci_scenarios.sh norasign:local ci-evidence
 ```
+To reproduce locally, create your own test keys with `norasign keygen --out ci-keys/ci-<profile>` and a matching `ci/trust.json`; the private keys of the official pipeline exist only as GitHub secrets and are not in this repository.
+
+### CI Key Management (Section 2.9)
+- **Private keys**: three test-only keys (one per profile) are stored as GitHub Actions secrets `CI_SIGNING_KEY_ED25519`, `CI_SIGNING_KEY_ECDSA`, and `CI_SIGNING_KEY_RSA`. The script writes each one to a `0600` temporary file, mounts it read-only at `/run/signing.key.pem` in the sign container only, and deletes it immediately after signing (plus an `EXIT` trap). Verify containers never receive a private key. The script also fails if `PRIVATE KEY` text appears in the evidence directory.
+- **Trust store**: `ci/trust.json` is committed trusted configuration (public keys `ci/ci-*.pub.pem`, package `sample-app`). The pipeline never runs `keygen` or `trust add` to make a release pass; the only trust stores it builds are the negative ones for C03.
+- **Trigger**: the job that can read the secrets runs only on `push` and `workflow_dispatch` from this repository, never on `pull_request`.
 The script runs every scenario in a clean directory with `--network none` and the runner UID/GID. It reads the real exit code of each run before reporting, and creates the deploy marker only when `verify` exits 0. Evidence (bundle, `verification.json`, stderr, marker) is written to `ci-evidence/`, with a summary in `ci-evidence/summary.md`. The same script runs in the `consumer-release-pipeline` job against the published image digest, and uploads `ci-evidence` as a workflow artifact.
 
 | ID | Scenario | Expected |
@@ -247,12 +257,13 @@ The script runs every scenario in a clean directory with `--network none` and th
   - Performance benchmarking suite (`scripts/benchmark.py`) and OpenSSL interoperability test suite (`tests/test_interop.py`).
   - GitHub Actions CI/CD workflows (`.github/workflows/ci.yml`, `docs.yml`).
   - Bonus 2: API Documentation setup via MkDocs and GitHub Pages.
+  - Bonus 1: Video Demo (each member presents their own part on camera).
 
 - **Andrew Isra Saputra DB (13523110)**:
   - Component 3: Trust Store Management (`norasign/trust.py`) with atomic file updates.
   - Component 4: 8-Step Verification Pipeline (`norasign/verifier.py`) adhering to Table 2.8 and Algorithm 2.
   - Component 5: Bonus 3 Signed SBOM implementation (`norasign/sbom.py`).
   - Test scenarios U01 - U14 execution and failure analysis.
-  - Bonus 1: Video Demo on-camera recording and presentation.
+  - Bonus 1: Video Demo (each member presents their own part on camera).
   - Report preparation (Theoretical background, design diagrams, security mitigations, benchmark results).
 
