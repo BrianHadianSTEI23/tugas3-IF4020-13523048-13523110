@@ -1,1 +1,1 @@
-{"valid": true, "status": "OK", "message": "Tanda tangan dan artefak valid.", "algorithm": "ed25519", "keyid": "6e9ccda518202f50334f8910e0f73a29318f4165255a9bd3f446149e1dd2865d", "package": "sample-app", "version": "1.0.0"}
+{"valid": true, "status": "OK", "message": "Tanda tangan dan artefak valid.", "algorithm": "ed25519", "keyid": "c8435f243d6ea0fc4feac8541d5154bfd2571909f0e77cb4fec4108bc9e79952", "package": "sample-app", "version": "1.0.0"}

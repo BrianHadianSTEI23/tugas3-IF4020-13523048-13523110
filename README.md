@@ -57,15 +57,15 @@ The workflow `.github/workflows/ci.yml` builds the image from this repository, p
 
 | Program version | Repository tag | Image tag | Digest (`sha256`) | Built from commit | Workflow run |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1.0.0 | `v1.0.0` | `ghcr.io/brianhadianstei23/norasign:1.0.0` | `sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2` | `8d6f103` | [run 43832817019](https://github.com/BrianHadianSTEI23/tugas3-IF4020-13523048-13523110/actions/runs/43832817019) |
+| 1.0.0 | `v1.0.0` | `ghcr.io/brianhadianstei23/norasign:1.0.0` | `sha256:bd2710b05a58ab908d0497d7c05fd7552f71f77eaeb11ae571da49e8eb992e1b` | `6c2b0ed` | [run 44556510407](https://github.com/BrianHadianSTEI23/tugas3-IF4020-13523048-13523110/actions/runs/44556510407) |
 
 Pinned reference:
 
 ```
-ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+ghcr.io/brianhadianstei23/norasign@sha256:bd2710b05a58ab908d0497d7c05fd7552f71f77eaeb11ae571da49e8eb992e1b
 ```
 
-The image was built from commit `8d6f103`, and scenarios C01 to C05 ran against exactly this digest in the same run (job `consumer-release-pipeline`). Commits after `8d6f103` only change documentation, tests, and the workflow: `git diff 8d6f103 v1.0.0 -- norasign pyproject.toml requirements.txt Dockerfile` is empty. Pushes to `main` publish only a `sha-<commit>` tag, so the `1.0.0` tag keeps pointing to this digest; it is moved only by a manual `workflow_dispatch` run. A sanitized copy of the run log and the evidence of every scenario are stored in `ci_evidence/`.
+The image was built from commit `6c2b0ed`, and scenarios C01 to C05 ran against exactly this digest in the same run (job `consumer-release-pipeline`). Commits after `6c2b0ed` only change documentation, tests, and the workflow: `git diff 6c2b0ed v1.0.0 -- norasign pyproject.toml requirements.txt Dockerfile` is empty. Pushes to `main` publish only a `sha-<commit>` tag, so the `1.0.0` tag keeps pointing to this digest; it is moved only by a manual `workflow_dispatch` run. A sanitized copy of the run log and the evidence of every scenario are stored in `ci_evidence/`.
 
 The package is public, so the image can be pulled without credentials.
 
@@ -73,7 +73,7 @@ The package is public, so the image can be pulled without credentials.
 To satisfy supply-chain security standards and Table 2.13, CI/CD workflows pin the container image using its immutable **SHA-256 digest**:
 
 ```bash
-docker pull ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+docker pull ghcr.io/brianhadianstei23/norasign@sha256:bd2710b05a58ab908d0497d7c05fd7552f71f77eaeb11ae571da49e8eb992e1b
 # Or by tag:
 # docker pull ghcr.io/brianhadianstei23/norasign:1.0.0
 ```
@@ -82,7 +82,7 @@ docker pull ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1
 The image runs with **zero runtime network access** (`--network none`) and supports non-root execution matching the runner user (`--user "$(id -u):$(id -g)"`):
 
 ```bash
-IMAGE=ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+IMAGE=ghcr.io/brianhadianstei23/norasign@sha256:bd2710b05a58ab908d0497d7c05fd7552f71f77eaeb11ae571da49e8eb992e1b
 
 # 1. Sign Artifact in CI Runner
 docker run --rm --network none \

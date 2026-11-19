@@ -1,4 +1,0 @@
-Trust store: /ci/trust.json (added)
-  Fingerprint: a04636d24080a7141011facd451bb301a128548e029440a1e59c310089b00d25
-  Algorithm:   rsa-pss-sha256
-  Packages:    sample-app
