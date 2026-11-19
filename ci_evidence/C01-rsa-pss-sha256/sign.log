@@ -1,5 +1,5 @@
 Successfully signed release artifact '/input/sample-app.zip'
   Package:   sample-app v1.0.0
   Algorithm: rsa-pss-sha256
-  Key ID:    a04636d24080a7141011facd451bb301a128548e029440a1e59c310089b00d25
+  Key ID:    55bb2b4396832fb085e4537008b9817481192ddd45f3bc16735baac6c2f95fb4
   Bundle:    /output/release.bundle.json
