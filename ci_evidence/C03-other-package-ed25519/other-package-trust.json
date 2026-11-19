@@ -2,9 +2,9 @@
   "schema": "minisign-trust/v1",
   "keys": [
     {
-      "keyid": "feb70c882e74017e44fdf6691b20fba7d67160584be70bc818be4593bfe2ef8e",
+      "keyid": "c8435f243d6ea0fc4feac8541d5154bfd2571909f0e77cb4fec4108bc9e79952",
       "algorithm": "ed25519",
-      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAAlzZNb5hZpEPn+RkUhpumvQ7M2VRAqx3GOI4HH4JaPc=\n-----END PUBLIC KEY-----\n",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEASn0IvOXvVG4J5SQXH6rAHVU6o0J+yyoXn4qFqBP2B4I=\n-----END PUBLIC KEY-----\n",
       "packages": [
         "other-app"
       ]

@@ -8,9 +8,9 @@ NoraSign is distributed as a lightweight container image for `linux/amd64` adher
 - **Release Tag**: `1.0.0`
 - **Digest Pinning**: Recommended for immutability and supply-chain integrity:
   ```bash
-  docker pull ghcr.io/brianhadianstei23/norasign@sha256:eaeb8f5103e5b4a63521f833d1356fe98943df601ad02a619847bbb92f7e86a2
+  docker pull ghcr.io/brianhadianstei23/norasign@sha256:bd2710b05a58ab908d0497d7c05fd7552f71f77eaeb11ae571da49e8eb992e1b
   ```
-- **Source of the digest**: built from commit `8d6f103` by workflow run 43832817019; scenarios C01 to C05 ran against this digest (evidence in `ci_evidence/`).
+- **Source of the digest**: built from commit `6c2b0ed` by workflow run 44556510407; scenarios C01 to C05 ran against this digest (evidence in `ci_evidence/`).
 
 ---
 

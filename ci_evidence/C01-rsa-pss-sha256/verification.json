@@ -1,1 +1,1 @@
-{"valid": true, "status": "OK", "message": "Tanda tangan dan artefak valid.", "algorithm": "rsa-pss-sha256", "keyid": "a04636d24080a7141011facd451bb301a128548e029440a1e59c310089b00d25", "package": "sample-app", "version": "1.0.0"}
+{"valid": true, "status": "OK", "message": "Tanda tangan dan artefak valid.", "algorithm": "rsa-pss-sha256", "keyid": "55bb2b4396832fb085e4537008b9817481192ddd45f3bc16735baac6c2f95fb4", "package": "sample-app", "version": "1.0.0"}

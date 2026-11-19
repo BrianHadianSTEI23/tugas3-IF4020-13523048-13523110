@@ -1,4 +1,0 @@
-Trust store: /ci/trust.json (added)
-  Fingerprint: 27a4bd586563885d04e1e794a7189236fb04a0aee7762f25346dfe4b9eb099c7
-  Algorithm:   ecdsa-p256-sha256
-  Packages:    sample-app
